@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Django Channels</title>
+</head>
+<body>
+  <input type="text" id="message"> <input type="button" id="send" value="Send">
+
+  <h2>Response</h2>
+  <pre id="response"></pre>
+
+  <script>
+    // Note that the path doesn't matter for routing; any WebSocket
+    // connection gets bumped over to WebSocket consumers
+    socket = new WebSocket("ws://" + window.location.host + "/chat/");
+
+    socket.onmessage = function(e) {
+        let el = document.getElementById('response')
+
+        el.innerHTML = el.innerHTML + '\n' + e.data
+    }
+
+    function sendMessage() {
+      let input = document.getElementById('message')
+
+      socket.send(input.value)
+    }
+
+    function load() {
+      let el = document.getElementById('send')
+
+      el.addEventListener('click', sendMessage, false)
+    }
+
+    document.addEventListener('DOMContentLoaded', load, false)
+
+  </script>
+</body>
+</html>
