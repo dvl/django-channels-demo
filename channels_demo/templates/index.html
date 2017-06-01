@@ -5,47 +5,48 @@
 <head>
   <meta charset="UTF-8">
   <title>Django Channels</title>
+  <style>
+    a {
+      color: orange;
+      text-decoration: none;
+    }
+  </style>
 </head>
 <body>
-  <input type="text" id="username" placeholder="Username">
+  <h1>Welcome, {{ request.user }}!</h1>
   <input type="text" id="message" placeholder="Message">
   <input type="button" id="send" value="Send">
 
-  <h2>Response</h2>
-  <pre id="response"></pre>
+  <h2>History [ <a href="#" id="clear">CLEAR</a> ]</h2>
+  <pre id="history"></pre>
 
+  <script src="{% static 'channels/js/websocketbridge.js' %}"></script>
   <script>
-    // Note that the path doesn't matter for routing; any WebSocket
-    // connection gets bumped over to WebSocket consumers
-    const socket = new WebSocket("ws://" + window.location.host + "/chat/")
+    const MESSAGE = 'message'
 
-    socket.onmessage = function(e) {
-        let el = document.getElementById('response')
+    const ws = new channels.WebSocketBridge()
+    ws.connect('/chat/?room=development')
 
-        el.innerHTML = el.innerHTML + '\n' + e.data
+    const history = document.getElementById('history'),
+          clear = document.getElementById('clear')
+
+    clear.addEventListener('click', () => history.innerHTML = '')
+
+    function appendText(text) {
+      history.innerHTML += text + '\n'
     }
 
-    function sendMessage() {
-      let message = document.getElementById('message'),
-          username = document.getElementById('username')
+    ws.socket.addEventListener('open', () => appendText('*** CONNECTED'))
+    ws.socket.addEventListener('close', () => appendText('*** DISCONNECTED'))
+    ws.socket.addEventListener('error', () => appendText('*** SERVER ERROR'))
+    ws.socket.addEventListener('message', (e) => appendText(e.data))
 
-      let msg = {
-        'date': Date.now(),
-        'username': username.value,
-        'text': message.value
-      }
+    const send = document.getElementById('send'),
+          message = document.getElementById('message')
 
-      socket.send(JSON.stringify(msg))
-    }
-
-    function load() {
-      let el = document.getElementById('send')
-
-      el.addEventListener('click', sendMessage, false)
-    }
-
-    document.addEventListener('DOMContentLoaded', load, false)
-
+    send.addEventListener('click', () => {
+      ws.send({text: message.value, command: MESSAGE})
+    })
   </script>
 </body>
 </html>
