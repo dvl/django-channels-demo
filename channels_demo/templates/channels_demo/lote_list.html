@@ -1,0 +1,33 @@
+{% extends '_layout/base.html' %}
+
+{% block title %}Lotes{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="twelve columns">
+        <h1>Listagem de Lotes</h1>
+        <table class="u-full-width">
+          <thead>
+            <th>Nome</th>
+            <th>Ultimo Lance</th>
+          </thead>
+          <tbody>
+            {% for lote in object_list %}
+              <tr>
+                <td>
+                  <a href="{{ lote.get_absolute_url }}">{{ lote.nome }}</a>
+                </td>
+                <td>R$ {{ lote.get_ultimo_lance.valor|default:"-" }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="2">Não existem lotes para disponiveis.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}

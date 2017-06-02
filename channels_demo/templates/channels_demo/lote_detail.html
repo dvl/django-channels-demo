@@ -1,0 +1,66 @@
+{% extends '_layout/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  {{ object.nome }}
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    window.app = {
+      lote_id: {{ object.pk }}
+    }
+  </script>
+  <script src="{% static 'channels/js/websocketbridge.js' %}"></script>
+  <script src="{% static 'js/lote.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="twelve columns">
+        <h1>Dados do Lote</h1>
+        <table class="u-full-width">
+          <tbody>
+            <tr>
+              <th>Nome</th>
+              <td>{{ object.nome }}</td>
+            </tr>
+            <tr>
+              <th>Descrição</th>
+              <td>{{ object.descricao }}</td>
+            </tr>
+            <tr>
+              <th>Encerra em</th>
+              <td>00:20</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h1>Dar Lance</h1>
+        <input type="number" id="lance" placeholder="Lance">
+        <input type="button" id="enviar" value="Enviar">
+
+        <h1>Histórico de Lances ({{ object.lance_set.count }})</h1>
+
+        <table class="u-full-width">
+          <thead>
+            <th>Arrematante</th>
+            <th>Lance</th>
+            <th>Horário</th>
+          </thead>
+          <tbody id="tbody">
+            {% for lance in object.lance_set.all %}
+              <tr>
+                <td>{{ lance.usuario }}</td>
+                <td>R$ {{ lance.valor }}</td>
+                <td>{{ lance.criado_em|date:"SHORT_DATETIME_FORMAT" }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
