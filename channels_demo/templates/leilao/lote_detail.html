@@ -11,6 +11,8 @@
     let LOTE_PK = {{ object.pk }}
   </script>
   <script src="{% static 'channels/js/websocketbridge.js' %}"></script>
+  <script src="{% static 'axios/dist/axios.js' %}"></script>
+  <script src="{% static 'vue/dist/vue.js' %}"></script>
   <script src="{% static 'js/leilao.js' %}"></script>
 {% endblock %}
 
@@ -25,12 +27,10 @@
         <h2 class="subtitle">Dar lance</h2>
         <div class="field has-addons">
           <p class="control">
-            <input class="input" type="number" placeholder="Valor" id="lance">
+            <input class="input" type="number" placeholder="Valor" v-model="lanceAtual">
           </p>
           <p class="control">
-            <a class="button is-info" id="enviar">
-              Enviar
-            </a>
+            <a class="button is-info" @click="enviarLance" v-bind:disabled="!lanceAtual">Enviar</a>
           </p>
         </div>
 
@@ -45,19 +45,11 @@
             </tr>
           </thead>
           <tbody>
-            {% for lance in object.lance_set.all %}
-              <tr>
-                <td>{{ lance.usuario }}</td>
-                <td>R$ {{ lance.valor }}</td>
-                <td>{{ lance.criado_em|date:"SHORT_DATETIME_FORMAT" }}</td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="3">
-                  Não existem lances para esse lote.
-                </td>
-              </tr>
-            {% endfor %}
+            <tr v-for="lance in lances">
+              <td v-text="lance.usuario"></td>
+              <td v-text="lance.valor"></td>
+              <td v-text="lance.criado_em"></td>
+            </tr>
           </tbody>
         </table>
       </div>

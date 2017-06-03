@@ -2,7 +2,7 @@ from django.utils import timezone
 
 from channels.binding.websockets import WebsocketBinding
 
-from . import models
+from . import models, serializers
 
 
 class LanceBinding(WebsocketBinding):
@@ -23,6 +23,11 @@ class LanceBinding(WebsocketBinding):
 
     def has_permission(self, user, action, pk):
         return True
+
+    def serialize_data(self, instance):
+        serializer = serializers.LanceSerializer(instance)
+
+        return serializer.data
 
     def create(self, data):
         self.model(

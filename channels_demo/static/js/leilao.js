@@ -1,29 +1,54 @@
-const ws = new channels.WebSocketBridge()
-ws.connect('/leilao/stream/')
-ws.listen((data) => console.log(data));
-ws.demultiplex('lances', (payload, streamName) => {
-  console.log(payload)
-})
+const app = new Vue({
+  el: '#app',
 
-ws.socket.addEventListener('open', () => console.log('*** CONNECTED'))
-ws.socket.addEventListener('close', () => console.log('*** DISCONNECTED'))
-ws.socket.addEventListener('error', () => console.log('*** SERVER ERROR'))
-ws.socket.addEventListener('message', (e) => console.log('*** MESSAGE', e))
+  data () {
+    return {
+      lanceAtual: null,
+      lances: [/* Lance */]
+    }
+  },
 
+  created () {
+    this.connect()
+  },
 
-const lance = document.getElementById('lance'),
-      enviar = document.getElementById('enviar')
+  mounted () {
+    this.fetchData()
+  },
 
-enviar.addEventListener('click', () => {
-  let msg = {
-    action: 'create',
-    data: {
-      lote: LOTE_PK,
-      valor: lance.value
+  methods: {
+    connect () {
+      this.ws = new channels.WebSocketBridge()
+      this.ws.connect('/leilao/stream/')
+      this.ws.listen()
+
+      this.ws.demultiplex('lances', (payload) => {
+        if (payload.data.lote == LOTE_PK) {
+          this.lances.splice(0, 0, payload.data)
+        }
+      })
+    },
+
+    fetchData () {
+      axios.get(`/api/lances/?lote=${LOTE_PK}`)
+        .then((response) => {
+          this.lances = response.data
+        })
+    },
+
+    enviarLance () {
+      let msg = {
+        action: 'create',
+        data: {
+          valor: this.lanceAtual,
+          lote: LOTE_PK
+        }
+      }
+
+      this.ws.stream('lances').send(msg)
+
+      this.lanceAtual = parseInt(this.lanceAtual) + 5
     }
   }
 
-  ws.stream('lances').send(msg)
-
-  console.log('*** LANCE ENVIADO', msg)
 })

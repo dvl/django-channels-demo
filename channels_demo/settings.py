@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # 3rd
     'channels',
+    'django_filters',
+    'rest_framework',
     # project
     'channels_demo.leilao',
 ]
@@ -131,7 +133,7 @@ STATICFILES_DIRS = [
 STATIC_URL = '/static/'
 
 
-# Channels
+# Django Channels
 
 CHANNEL_LAYERS = {
     'default': {
@@ -144,4 +146,12 @@ CHANNEL_LAYERS = {
         #     ]
         # },
     },
+}
+
+
+# Django Rest Framework
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ('django_filters.rest_framework.DjangoFilterBackend',)
 }
