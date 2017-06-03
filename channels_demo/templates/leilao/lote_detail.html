@@ -1,0 +1,66 @@
+{% extends '_layout/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}
+  {{ object.nome }}
+{% endblock %}
+
+{% block extra_js %}
+  <script>
+    let LOTE_PK = {{ object.pk }}
+  </script>
+  <script src="{% static 'channels/js/websocketbridge.js' %}"></script>
+  <script src="{% static 'js/leilao.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <div class="heading">
+        <h1 class="title">{{ object.descricao }}</h1>
+      </div>
+      <hr>
+      <div class="content">
+        <h2 class="subtitle">Dar lance</h2>
+        <div class="field has-addons">
+          <p class="control">
+            <input class="input" type="number" placeholder="Valor" id="lance">
+          </p>
+          <p class="control">
+            <a class="button is-info" id="enviar">
+              Enviar
+            </a>
+          </p>
+        </div>
+
+        <h2 class="subtitle">Lista de Lances</h2>
+
+        <table class="table is-bordered is-striped is-narrow">
+          <thead>
+            <tr>
+              <th>Arrematante</th>
+              <th>Valor</th>
+              <th>Horário</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lance in object.lance_set.all %}
+              <tr>
+                <td>{{ lance.usuario }}</td>
+                <td>R$ {{ lance.valor }}</td>
+                <td>{{ lance.criado_em|date:"SHORT_DATETIME_FORMAT" }}</td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="3">
+                  Não existem lances para esse lote.
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+{% endblock %}

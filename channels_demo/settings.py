@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     # 3rd
     'channels',
     # project
-    'channels_demo',
+    'channels_demo.leilao',
 ]
 
 MIDDLEWARE = [
@@ -59,7 +59,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'templates')
+            os.path.join(BASE_DIR, 'channels_demo', 'templates')
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -125,6 +125,7 @@ USE_TZ = True
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'node_modules'),
+    os.path.join(BASE_DIR, 'channels_demo', 'static'),
 ]
 
 STATIC_URL = '/static/'

@@ -1,0 +1,36 @@
+{% extends '_layout/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Leilões{% endblock %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <div class="heading">
+        <h1 class="title">Leilões</h1>
+        <h2 class="subtitle">Lista de leilões disponiveis para lance</h2>
+      </div>
+      <div class="content">
+        <table class="table is-bordered">
+          <thead>
+            <tr>
+              <th>Leilão</th>
+              <th>Lotes</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for leilao in object_list %}
+              <tr>
+                <td>
+                  <a href="{% url 'leilao:leilao-detail' leilao.pk %}">{{ leilao.nome }}</a>
+                </td>
+                <td>{{ leilao.lote_set.count }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+{% endblock %}

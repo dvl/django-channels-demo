@@ -1,12 +1,13 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.generic import TemplateView
 
-from . import views
 
 urlpatterns = [
-    url(r'^$', views.IndexView.as_view(), name='index'),
-    url(r'^lotes/$', views.LotesListView.as_view(), name='lotes-list'),
-    url(r'^lotes/(?P<pk>\d+)/$', views.LoteDetailView.as_view(), name='lotes-detail'),
+    url(r'^$', TemplateView.as_view(template_name='index.html'), name='index'),
+
+    url(r'^leilao/', include('channels_demo.leilao.urls', namespace='leilao')),
+    url(r'^chat/', include('channels_demo.chat.urls', namespace='chat')),
 
     url(r'^admin/', admin.site.urls),
 ]

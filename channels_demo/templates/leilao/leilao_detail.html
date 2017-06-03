@@ -1,0 +1,34 @@
+{% extends '_layout/base.html' %}
+
+{% block content %}
+  <section class="section">
+    <div class="container">
+      <div class="heading">
+        <h1 class="title">{{ object.nome }}</h1>
+        <h2 class="subtitle">Lista de lotes do leilão</h2>
+      </div>
+      <div class="content">
+        <table class="table is-bordered">
+          <thead>
+            <tr>
+              <th>Lote</th>
+              <th>Arrematante</th>
+              <th>Valor</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lote in object.lote_set.all %}
+              <tr>
+                <td>
+                  <a href="{% url 'leilao:lote-detail' lote.pk %}">{{ lote.descricao }}</a>
+                </td>
+                <td>{{ lote.get_ultimo_lance.usuario }}</td>
+                <td>R$ {{ lote.get_ultimo_lance.valor }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+{% endblock %}
