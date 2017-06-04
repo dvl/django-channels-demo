@@ -3,8 +3,9 @@ const app = new Vue({
 
   data () {
     return {
+      lances: null,
       lanceAtual: null,
-      lances: [/* Lance */]
+      segundosRestantes: null
     }
   },
 
@@ -14,6 +15,7 @@ const app = new Vue({
 
   mounted () {
     this.fetchData()
+    setInterval(() => this.atualizarContador(), 1000)
   },
 
   methods: {
@@ -22,12 +24,16 @@ const app = new Vue({
       this.ws.connect('/leilao/stream/')
       this.ws.listen()
 
+      // TODO(andre): ouvir os eventos de close e error para definir
+      // se precisamos buscar todos os lances novamente do servidor
+      // em caso de falha na conexão.
+
       this.ws.demultiplex('lances', (payload) => {
         if (payload.data.lote == LOTE_PK) {
           this.lances.splice(0, 0, payload.data)
         }
-      })
-    },
+      }
+)    },
 
     fetchData () {
       axios.get(`/api/lances/?lote=${LOTE_PK}`)
@@ -48,7 +54,17 @@ const app = new Vue({
       this.ws.stream('lances').send(msg)
 
       this.lanceAtual = parseInt(this.lanceAtual) + 5
+    },
+
+    atualizarContador () {
+      if (this.lances) {
+        let agora = moment(new Date()),  // agora deve vir do servidor
+            fim = moment(this.lances[0].criado_em).add(120, 's')
+
+        let restante = moment.duration(fim.diff(agora))
+
+        this.segundosRestantes = restante.minutes() + ':' + restante.seconds()
+      }
     }
   }
-
 })

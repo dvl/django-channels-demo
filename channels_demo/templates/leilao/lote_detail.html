@@ -11,6 +11,7 @@
     let LOTE_PK = {{ object.pk }}
   </script>
   <script src="{% static 'channels/js/websocketbridge.js' %}"></script>
+  <script src="{% static 'moment/moment.js' %}"></script>
   <script src="{% static 'axios/dist/axios.js' %}"></script>
   <script src="{% static 'vue/dist/vue.js' %}"></script>
   <script src="{% static 'js/leilao.js' %}"></script>
@@ -33,9 +34,10 @@
             <a class="button is-info" @click="enviarLance" v-bind:disabled="!lanceAtual">Enviar</a>
           </p>
         </div>
-
+        <hr>
+        <h1 class="title has-text-centered" v-text="segundosRestantes"></h1>
+        <hr>
         <h2 class="subtitle">Lista de Lances</h2>
-
         <table class="table is-bordered is-striped is-narrow">
           <thead>
             <tr>
